@@ -9,8 +9,77 @@
 
 body {
   background: #343541;
+  margin: 0;
+  padding: 0;
 }
-
+.center {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin-bottom: -640px;
+  transition: opacity 5s, visibility 5s;
+}
+.center img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: -50px;
+  display: block;
+  margin-left: 70px;
+}
+.ring {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  animation: ring 2s linear infinite;
+}
+@keyframes ring {
+  0% {
+    transform: rotate(0deg);
+    box-shadow: 1px 5px 2px #e65c00;
+  }
+  50% {
+    transform: rotate(180deg);
+    box-shadow: 1px 5px 2px #18b201;
+  }
+  0% {
+    transform: rotate(360deg);
+    box-shadow: 1px 5px 2px #0456c8;
+  }
+}
+.ring::before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+}
+.center::after {
+  content: "";
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  animation: loading 0.75s ease infinite;
+}
+span {
+  color: #737373;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 200px;
+  animation: text 3s ease-in-out infinite;
+  margin-top: 85px;
+  margin-right: -200px;
+}
+@keyframes text {
+  50% {
+    color: white;
+    font: bold;
+  }
+}
 #app {
   width: 100vw;
   height: 100vh;
@@ -20,7 +89,18 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-
+#app::after {
+  content: "";
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  animation: loading 0.75s ease infinite;
+  margin-top: -200px;
+}
+.center-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
 #chat_container {
   flex: 1;
   width: 100%;
@@ -33,6 +113,7 @@ body {
   scrollbar-width: none;
   padding-bottom: 20px;
   scroll-behavior: smooth;
+  margin-top: 25px;
 }
 
 #chat_container::-webkit-scrollbar {
@@ -45,7 +126,7 @@ body {
 }
 
 .ai {
-  background: #40414F;
+  background: #40414f;
 }
 
 .chat {
@@ -62,7 +143,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 5px;
-  background: #5436DA;
+  background: #5436da;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -84,7 +165,7 @@ body {
   font-size: 20px;
   max-width: 100%;
   overflow-x: scroll;
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -98,10 +179,12 @@ form {
   max-width: 1280px;
   margin: 0 auto;
   padding: 10px;
-  background: #40414F;
+  background: #40414f;
   display: flex;
   flex-direction: row;
   gap: 10px;
+  opacity: 0;
+  transition: opacity 5s ease-in-out;
 }
 
 textarea {

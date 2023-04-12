@@ -1,112 +1,123 @@
-import bot from './assets/bot.svg';
-import user from './assets/user.svg';
-
-const form = document.querySelector('form');
-const chatContainer = document.querySelector('#chat_container');
+import { bot } from "./assets/bot.js";
+import { user } from "./assets/user.js";
+const form = document.querySelector("form");
+const chatContainer = document.querySelector("#chat_container");
 
 let loadInterval;
 
 function loader(element) {
-    element.textContent = ' ';
+  element.textContent = "";
 
-    loadInterval = setInterval(() => {
-        element.textContent += '.';
+  loadInterval = setInterval(() => {
+    element.textContent += ".";
 
-        if (element.textContent === '....') {
-            element.textContent = '';
-        }
-    }, 300)
+    if (element.textContent === "....") {
+      element.textContent = "";
+    }
+  }, 300);
 }
 
 function typeText(element, text) {
-    let index = 0;
+  let index = 0;
 
-    let interval = setInterval(() => {
-        if(index < text.length) {
-            element.innerHTML += text.charAt(index);
-            index++;
-        } else {
-            clearInterval(interval);
-        }
-    },  20)
+  let interval = setInterval(() => {
+    if (index < text.length) {
+      element.innerHTML += text.charAt(index);
+      index++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 20);
 }
 
 function generateUniqueId() {
-    const timestamp = Date.now();
-    const randomNumber = Math.random();
-    const hexadecimalString = randomNumber.toString(16);
+  const timestamp = Date.now();
+  const randomNumber = Math.random();
+  const hexadecimalString = randomNumber.toString(16);
 
-    return `id-$(timestamp)-$(hexadecimalString)`;
+  return `id-${timestamp}-${hexadecimalString}`;
 }
 
-function chatStripe (isAi, value, uniqueId) {
-    return (
-        `
-            <div class="wrapper ${isAi && 'ai'}">
+function chatStripe(isAi, value, uniqueId) {
+  return `
+            <div class="wrapper ${isAi && "ai"}">
                 <div class="chat">
                     <div class="profile">
-                        <img
-                            scr="${isAi ? bot : user }"
-                            alt="${isAi ? 'bot' : 'user'}"
+                         <img
+            src="${isAi ? "./assets/nevtik.png" : "./assets/user.svg"}"
+            alt="${isAi ? "bot" : "user"}"
+          />
+                            
                     </div>
-                    <div class="message" id=${uniqueId}>${value}></div>
+                    <div class="message" id=${uniqueId}>${value}</div>
                 </div>
             </div>
-        `
-    )
+        `;
 }
 
 const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const data = new FormData(form);
+  const data = new FormData(form);
 
-    // user's chatstripe
-    chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
+  // user's chatstripe
+  chatContainer.innerHTML += chatStripe(false, data.get("prompt"));
 
-    form.reset();
+  form.reset();
 
-    // bot's chatstripe
-    const uniqueId = generateUniqueId();
-    chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+  // bot's chatstripe
+  const uniqueId = generateUniqueId();
+  chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
 
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 
-    const messageDiv = document.getElementById(uniqueId);
+  const messageDiv = document.getElementById(uniqueId);
 
-    loader(messageDiv);
+  loader(messageDiv);
 
-    // fetch data from server -> bot's response
-    const response = await fetch('http://localhost:5000', [{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            prompt: data.get('prompt')
-        })
-    }]);
+  // fetch data from server -> bot's response
+  const response = await fetch("http://localhost:5000", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: data.get("prompt"),
+    }),
+  });
 
-    clearInterval(loadInterval);
-    messageDiv.innerHTML = '';
+  clearInterval(loadInterval);
+  messageDiv.innerHTML = "";
 
-    if(response.ok) {
-        const data = await response.json();
-        const parsedData = data.bot.trim();
+  if (response.ok) {
+    const data = await response.json();
+    const parsedData = data.bot.trim();
 
-        typeText(messageDiv, parsedData);
-    } else {
-        const err = await response.text();
+    typeText(messageDiv, parsedData);
+  } else {
+    const err = await response.text();
 
-        messageDiv.innerHTML = "Something went wrong";
+    messageDiv.innerHTML = "Something went wrong";
 
-        alert(err);
-    }
-}
+    alert(err);
+  }
+};
 
-form.addEventListener('submit', handleSubmit);
-form.addEventListener('keyup', (e) => {
-    if (e.keyCode === 13) {
-        handleSubmit(e);
-    }
-})
+form.addEventListener("submit", handleSubmit);
+form.addEventListener("keyup", (e) => {
+  if (e.keyCode === 13) {
+    handleSubmit(e);
+  }
+});
+
+window.addEventListener("load", () => {
+  const center = document.querySelector(".center");
+
+  center.classList.add("center-hidden");
+
+  center.addEventListener("transitioned", () => {
+    document.body.removeChild("center");
+  });
+});
+
+document.querySelector("form").style.opacity = 1;
